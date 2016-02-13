@@ -31,20 +31,26 @@ class Display():
         eventList = pygame.event.get()
         for each in eventList:
             if each.type == QUIT:
-                print("[INFO]Get window Close.")
+                #print("[INFO]Get window Close.")
                 self.isRunning = False
+                pass
             elif each.type == KEYDOWN:
-                print("[INFO]Get key %s is Down." % each.key)
+                #print("[INFO]Get key %s is Down." % each.key)
+                pass
             elif each.type == KEYUP:
-                print("[INFO]Get key %s is Up." % each.key)
+                #print("[INFO]Get key %s is Up." % each.key)
+                pass
             elif each.type == MOUSEMOTION:
-                print("[INFO]Get mouse is at %s." % str(each.pos))
+                #print("[INFO]Get mouse is at %s." % str(each.pos))
                 self.mousePos = each.pos
+                pass
             elif each.type == MOUSEBUTTONDOWN:
-                print("[INFO]Get mouse %s is Down." % each.button)
+                #print("[INFO]Get mouse %s is Down." % each.button)
+                pass
             elif each.type == MOUSEBUTTONUP:
-                print("[INFO]Get mouse %s is Up." % each.button)
+                #print("[INFO]Get mouse %s is Up." % each.button)
                 self.doMouseButtonUp(each.button)
+                pass
     def doMouseButtonUp(self, button):
         pass
 if __name__ == '__main__':

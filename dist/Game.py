@@ -11,8 +11,8 @@ class Game(lib_Display.Display):
         self.batDecayRate = [0.8, 1]
         self.Gravity = 0.05
         self.yourScore, self.myScore = 0, 0
-        self.AIMaxSpeed = 10
-        self.AITmpData = []
+        self.AIMaxSpeed = 20
+        self.AIHitDistance = 10
         self.winScore = 20
         self.net = lib_NET.NET()
         self.mode = input('请输入模式\n(输入“s”进入单人模式\n输入“h”进入多人模式，并建立主机\n输入“c”进入多人模式，并做客户端)\n：')
@@ -43,11 +43,11 @@ class Game(lib_Display.Display):
         self.sound_ha = pygame.mixer.Sound("ha.wav")
 
         if self.mode == "s":
-            self.setTitle("SinglePlayer")
+            self.setTitle("SinglePlayer (Press right mouse button to reset ball.)")
         elif self.mode == "ms":
-            self.setTitle("Server")
+            self.setTitle("Server (Press right mouse button to reset ball.)")
         elif self.mode == "mc":
-            self.setTitle("Client")
+            self.setTitle("Client (Press right mouse button to reset ball.)")
 
         self.ballData = [[self.screenSize[0] / 2, 100], 10, [0, 0]]
         self.myBatData = [[0, 0], (2, 80), [0, 0]]
@@ -74,7 +74,6 @@ class Game(lib_Display.Display):
             print("[    ]self.font = pygame.font.Font('Ubuntu-R.ttf', 32)")
         finally:
             pass
-
         if self.mode == "ms":
             newData = "%s|%s|%s|%s|%s|%s" % (self.ballData[0][0], self.ballData[0][1], self.myBatData[0][0], self.myBatData[0][1], self.myScore, self.yourScore)
             print("Server send data:%s"%str(newData))
@@ -263,30 +262,36 @@ class Game(lib_Display.Display):
         # 局势判断
         if self.ballData[0][0] <= self.screenSize[0] / 2 and self.ballData[2][0] >= 0:
             # 返回
-            self.AIMoveTo(self.screenSize[0] / 16, self.screenSize[1] / 2, 1)
+            self.AIMoveTo(self.yourBatData[0][0], self.yourBatData[0][1], 64)
         elif self.ballData[0][0] >= self.screenSize[0] / 2 and self.ballData[2][0] >= 0:
             # 恢复
-            self.AIMoveTo(self.screenSize[0] / 16, (self.screenSize[1] / 2 + self.ballData[0][1]) / 2, 1)
+            self.AIMoveTo(self.screenSize[0] / 3, (self.screenSize[1] / 2 + self.ballData[0][1]) / 2, 32)
         elif self.ballData[0][0] >= self.screenSize[0] / 2 and self.ballData[2][0] <= 0:
             # 准备
-            self.AIMoveTo(self.screenSize[0] / 16, self.ballData[0][1], 1)
+            self.AIMoveTo(self.screenSize[0] / 3, self.ballData[0][1], 32)
+        elif self.ballData[0][0] <= self.screenSize[0] / 8 and self.ballData[2][0] <= 0:
+            # 击打
+            self.AIMoveTo(self.ballData[0][0] - self.AIHitDistance, self.ballData[0][1] + self.ballData[2][1], 8)
+            if self.AIGetInfo()[2] <= self.AIHitDistance:
+                self.AIMoveTo(self.ballData[0][0] + self.AIHitDistance, self.ballData[0][1], 1)
         elif self.ballData[0][0] <= self.screenSize[0] / 2 and self.ballData[2][0] <= 0:
             # 击打
-            self.AIMoveTo(self.screenSize[0] / 16, self.ballData[0][1], 1)
-            if self.AIGetInfo()[2] <= 100:
-                self.AIMoveTo(self.ballData[0][0] + 200, self.ballData[0][1], 1)
+            self.AIMoveTo(self.ballData[0][0] - self.ballData[1] - self.AIHitDistance + self.ballData[2][0] * 10, self.ballData[0][1] + self.ballData[2][1], 8)
+            if self.AIGetInfo()[2] <= self.AIHitDistance:
+                self.AIMoveTo(self.ballData[0][0] + self.AIHitDistance, self.ballData[0][1], 1)
     def AIGetInfo(self):
         deltaX, deltaY = self.ballData[0][0] - self.yourBatData[0][0],  self.ballData[0][1] - self.yourBatData[0][1]
         delta = hypot(deltaX, deltaY)
         return [deltaX, deltaY, delta]
-    def AIMoveTo(self, x, y, speed):
+    def AIMoveTo(self, x, y, rate):
         deltaX, deltaY = x - self.yourBatData[0][0], y - self.yourBatData[0][1]
         delta = hypot(deltaX, deltaY)
-        self.AIMove(x - self.yourBatData[2][0], y - self.yourBatData[2][1], delta / 8)
+        self.AIMove(x - self.yourBatData[2][0], y - self.yourBatData[2][1], delta / rate)
     def AIMove(self, x, y, speed):
         if speed > self.AIMaxSpeed:
+            print("[INFO]超过AI限制速度：%s" % speed)
             speed = self.AIMaxSpeed
-        a = hypot(x, y)
+        a = hypot(x, y) + 0.001
         tX, tY = speed * x / a, speed * y / a
         self.yourBatData[0] = [tX + self.yourBatData[2][0], tY + self.yourBatData[2][1]]
     def playSound(self, sound, positionX):
