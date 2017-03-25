@@ -78,7 +78,8 @@ class Game:
         self.isRunning['game'] = True
         pygame.init()
         self.setting['NetSize'] = [2, self.setting['ScreenSize'][1] / 8]
-        self.setting['TableSize'] = [self.setting['ScreenSize'][0] / 2, self.setting['ScreenSize'][1] / 16]
+        self.setting['TableSize'] = [self.setting['ScreenSize']
+                                     [0] / 2, self.setting['ScreenSize'][1] / 16]
         if debug:
             self.setting['Debug'] = True
             self.data['f'] = 0
@@ -121,10 +122,12 @@ class Game:
             print('必须选择一个模式！')
             print()
         self.font = pygame.font.Font('res\\Ubuntu-R.ttf', 32)
-        self.screen = pygame.display.set_mode(self.setting['ScreenSize'], 0, 32)
+        self.screen = pygame.display.set_mode(
+            self.setting['ScreenSize'], 0, 32)
         pygame.display.set_caption(self.setting['Title'])
 
-        self.ball = pygame.Surface((self.setting['BallSize'] * 2, self.setting['BallSize'] * 2))
+        self.ball = pygame.Surface(
+            (self.setting['BallSize'] * 2, self.setting['BallSize'] * 2))
         self.ball.fill(self.WHITE)
         pygame.draw.circle(self.ball, self.RED, [self.setting['BallSize'], self.setting['BallSize']],
                            self.setting['BallSize'])
@@ -138,7 +141,8 @@ class Game:
         self.table = pygame.Surface(self.setting['TableSize'])
         self.net.fill(self.BLACK)
         # pygame.draw.rect(self.table, self.WHITE,
-        #                  pygame.locals.Rect((2, 2), (self.setting['TableSize'][0] - 4, self.setting['TableSize'][1] - 2)))
+        # pygame.locals.Rect((2, 2), (self.setting['TableSize'][0] - 4,
+        # self.setting['TableSize'][1] - 2)))
 
         # pygame.mouse.set_visible(False)
 
@@ -219,7 +223,8 @@ class Game:
         if self.data['ball']['pos'][0] <= self.setting['ScreenSize'][0] / 8 and self.data['ball']['speed'][0] <= 0:
             # 击打
             if get_delta()[2] <= self.setting['AIHitDistance']:
-                target = self.data['ball']['pos'] + np.array([self.setting['AIHitDistance'], 0])
+                target = self.data['ball']['pos'] + \
+                    np.array([self.setting['AIHitDistance'], 0])
                 return move_to(target, 1)
             else:
                 target = self.data['ball']['pos'] + np.array(
@@ -228,7 +233,8 @@ class Game:
         elif self.data['ball']['pos'][0] <= self.setting['ScreenSize'][0] / 2 and self.data['ball']['speed'][0] <= 0:
             # 击打
             if get_delta()[2] <= self.setting['AIHitDistance']:
-                target = self.data['ball']['pos'] + np.array([self.setting['AIHitDistance'], 0])
+                target = self.data['ball']['pos'] + \
+                    np.array([self.setting['AIHitDistance'], 0])
                 return move_to(target, 1)
             else:
                 target = self.data['ball']['pos'] + np.array(
@@ -242,22 +248,28 @@ class Game:
         self.data['my_bat']['las_pos'] = self.data['my_bat']['pos']
         self.data['my_bat']['pos'] = self.data['mouse']
         self.data['my_bat']['pdc_pos'] = self.data['my_bat']['pos'] - self.data['my_bat']['las_pos'] + \
-                                         self.data['my_bat']['pos']
+            self.data['my_bat']['pos']
         if self.data['my_bat']['pos'][0] < self.setting['ScreenSize'][0] / 2 + self.setting['BatSize'][0] / 2:
-            self.data['my_bat']['pos'][0] = self.setting['ScreenSize'][0] / 2 + self.setting['BatSize'][0] / 2
+            self.data['my_bat']['pos'][0] = self.setting[
+                'ScreenSize'][0] / 2 + self.setting['BatSize'][0] / 2
             self.data['my_bat']['pdc_pos'][0] = self.data['my_bat']['pos'][0]
         # 你板
         self.data['your_bat']['las_pos'] = self.data['your_bat']['pos']
         self.data['your_bat']['pos'] = self.data['your_mouse']
         if self.data['your_bat']['pos'][0] > self.setting['ScreenSize'][0] / 2 + self.setting['BatSize'][0] / 2:
-            self.data['your_bat']['pos'][0] = self.setting['ScreenSize'][0] / 2 - self.setting['BatSize'][0] / 2
+            self.data['your_bat']['pos'][0] = self.setting[
+                'ScreenSize'][0] / 2 - self.setting['BatSize'][0] / 2
         # 球的物理
-        self.data['ball']['speed'] = np.add(self.data['ball']['speed'], self.setting['Gravity'], casting='unsafe')
-        self.data['ball']['pos'] = np.add(self.data['ball']['pos'], self.data['ball']['speed'], casting='unsafe')
+        self.data['ball']['speed'] = np.add(self.data['ball']['speed'], self.setting[
+                                            'Gravity'], casting='unsafe')
+        self.data['ball']['pos'] = np.add(self.data['ball']['pos'], self.data[
+                                          'ball']['speed'], casting='unsafe')
         # 碰撞地板
         if self.data['ball']['pos'][1] + self.setting['BallSize'] > self.setting['ScreenSize'][1]:
-            self.data['ball']['pos'][1] = self.setting['ScreenSize'][1] - self.setting['BallSize']
-            self.data['ball']['speed'][1] = -abs(self.data['ball']['speed'][1]) * 0.9
+            self.data['ball']['pos'][1] = self.setting[
+                'ScreenSize'][1] - self.setting['BallSize']
+            self.data['ball']['speed'][1] = - \
+                abs(self.data['ball']['speed'][1]) * 0.9
             if self.data['ball']['pos'][0] > self.setting['ScreenSize'][0] / 2:
                 self.judge('hitRightBad')
             else:
@@ -272,14 +284,15 @@ class Game:
         if (self.data['ball']['pos'][1] + self.setting['BallSize'] > self.setting['ScreenSize'][1] -
             self.setting['TableSize'][1]
             and self.data['ball']['pos'][0] + self.setting['BallSize'] > self.setting['ScreenSize'][0] / 2 -
-                    self.setting['TableSize'][
-                        0] / 2
+            self.setting['TableSize'][
+            0] / 2
             and self.data['ball']['pos'][0] - self.setting['BallSize'] < self.setting['ScreenSize'][0] / 2 +
-                    self.setting['TableSize'][
-                        0] / 2):
+            self.setting['TableSize'][
+                0] / 2):
             self.data['ball']['pos'][1] = self.setting['ScreenSize'][1] - self.setting['TableSize'][1] - self.setting[
                 'BallSize']
-            self.data['ball']['speed'][1] = -abs(self.data['ball']['speed'][1]) * 0.9
+            self.data['ball']['speed'][1] = - \
+                abs(self.data['ball']['speed'][1]) * 0.9
             if self.data['ball']['pos'][0] > self.setting['ScreenSize'][0] / 2:
                 self.judge('hitRightTable')
             else:
@@ -289,25 +302,29 @@ class Game:
                 self.setting['TableSize'][0] / 2
             and self.data['ball']['pos'][1] + self.setting['BallSize'] > self.setting['ScreenSize'][1] -
                 self.setting['TableSize'][1]
-            and self.data['ball']['pos'][0] < self.setting['ScreenSize'][0] / 2):
+                and self.data['ball']['pos'][0] < self.setting['ScreenSize'][0] / 2):
             self.data['ball']['pos'][0] = self.setting['ScreenSize'][0] / 2 - self.setting['TableSize'][0] / 2 - \
-                                          self.setting['BallSize']
-            self.data['ball']['speed'][0] = -abs(self.data['ball']['speed'][0]) * 0.9
+                self.setting['BallSize']
+            self.data['ball']['speed'][0] = - \
+                abs(self.data['ball']['speed'][0]) * 0.9
             self.judge('hitLeftBad')
         # 碰撞右桌沿
         if (self.data['ball']['pos'][0] - self.setting['BallSize'] < self.setting['ScreenSize'][0] / 2 +
                 self.setting['TableSize'][0] / 2
             and self.data['ball']['pos'][1] + self.setting['BallSize'] > self.setting['ScreenSize'][1] -
                 self.setting['TableSize'][1]
-            and self.data['ball']['pos'][0] > self.setting['ScreenSize'][0] / 2):
+                and self.data['ball']['pos'][0] > self.setting['ScreenSize'][0] / 2):
             self.data['ball']['pos'][0] = self.setting['ScreenSize'][0] / 2 + self.setting['TableSize'][0] / 2 + \
-                                          self.setting['BallSize']
-            self.data['ball']['speed'][0] = abs(self.data['ball']['speed'][0]) * 0.9
+                self.setting['BallSize']
+            self.data['ball']['speed'][0] = abs(
+                self.data['ball']['speed'][0]) * 0.9
             self.judge('hitRightBad')
         # 碰撞右墙
         if self.data['ball']['pos'][0] + self.setting['BallSize'] > self.setting['ScreenSize'][0]:
-            self.data['ball']['pos'][0] = self.setting['ScreenSize'][0] - self.setting['BallSize']
-            self.data['ball']['speed'][0] = -abs(self.data['ball']['speed'][0]) * 0.9
+            self.data['ball']['pos'][0] = self.setting[
+                'ScreenSize'][0] - self.setting['BallSize']
+            self.data['ball']['speed'][0] = - \
+                abs(self.data['ball']['speed'][0]) * 0.9
             self.judge('hitRightBad')
             if isinstance(self.data['your_score'], str) or isinstance(self.data['your_score'], str):
                 self.data['your_score'], self.data['my_score'] = 0, 0
@@ -315,7 +332,8 @@ class Game:
         # 碰撞左墙
         if self.data['ball']['pos'][0] - self.setting['BallSize'] < 0:
             self.data['ball']['pos'][0] = self.setting['BallSize']
-            self.data['ball']['speed'][0] = abs(self.data['ball']['speed'][0]) * 0.9
+            self.data['ball']['speed'][0] = abs(
+                self.data['ball']['speed'][0]) * 0.9
             self.judge('hitLeftBad')
             if isinstance(self.data['your_score'], str) or isinstance(self.data['your_score'], str):
                 self.data['your_score'], self.data['my_score'] = 0, 0
@@ -324,14 +342,14 @@ class Game:
         if (self.data['ball']['pos'][0] > self.data['my_bat']['pos'][0] - self.setting['BallSize'] -
                 self.setting['BatSize'][0] / 2
             and self.data['ball']['pos'][0] < self.data['my_bat']['pos'][0] + self.setting['BallSize'] +
-                    self.setting['BatSize'][0] / 2
+            self.setting['BatSize'][0] / 2
             and self.data['ball']['pos'][1] > self.data['my_bat']['pos'][1] - self.setting['BallSize'] -
-                    self.setting['BatSize'][1] / 2
+            self.setting['BatSize'][1] / 2
             and self.data['ball']['pos'][1] < self.data['my_bat']['pos'][1] + self.setting['BallSize'] +
-                    self.setting['BatSize'][1] / 2):
+                self.setting['BatSize'][1] / 2):
             self.judge('hitRightBat')
             self.data['ball']['pos'][0] = self.data['my_bat']['pos'][0] - self.setting['BallSize'] - \
-                                          self.setting['BatSize'][0] / 2
+                self.setting['BatSize'][0] / 2
             self.data['ball']['speed'][0] = (self.data['my_bat']['pos'][0] - self.data['my_bat']['las_pos'][0] -
                                              self.data['ball']['speed'][
                                                  0]) * self.setting['BatDecayRate'][0]
@@ -342,14 +360,14 @@ class Game:
         if (self.data['ball']['pos'][0] > self.data['your_bat']['pos'][0] - self.setting['BallSize'] -
                 self.setting['BatSize'][0] / 2
             and self.data['ball']['pos'][0] < self.data['your_bat']['pos'][0] + self.setting['BallSize'] +
-                    self.setting['BatSize'][0] / 2
+            self.setting['BatSize'][0] / 2
             and self.data['ball']['pos'][1] > self.data['your_bat']['pos'][1] - self.setting['BallSize'] -
-                    self.setting['BatSize'][1] / 2
+            self.setting['BatSize'][1] / 2
             and self.data['ball']['pos'][1] < self.data['your_bat']['pos'][1] + self.setting['BallSize'] +
-                    self.setting['BatSize'][1] / 2):
+                self.setting['BatSize'][1] / 2):
             self.judge('hitLeftBat')
             self.data['ball']['pos'][0] = self.data['your_bat']['pos'][0] + self.setting['BallSize'] + \
-                                          self.setting['BatSize'][0] / 2
+                self.setting['BatSize'][0] / 2
             self.data['ball']['speed'][0] = (self.data['your_bat']['pos'][0] - self.data['your_bat']['las_pos'][0] -
                                              self.data['ball']['speed'][0]) * self.setting['BatDecayRate'][0]
             self.data['ball']['speed'][1] = (self.data['your_bat']['pos'][1] - self.data['your_bat']['las_pos'][1] +
@@ -364,21 +382,21 @@ class Game:
                 self.setting['BallSize']):
             if self.data['ball']['speed'][0] > 0:
                 self.data['ball']['pos'][0] = self.setting['ScreenSize'][0] / 2 - self.setting['NetSize'][0] / 2 - \
-                                              self.setting['BallSize']
+                    self.setting['BallSize']
                 self.data['ball']['speed'][0] = - self.data['ball']['speed'][0]
             elif self.data['ball']['speed'][0] < 0:
                 self.data['ball']['pos'][0] = self.setting['ScreenSize'][0] / 2 + self.setting['NetSize'][0] / 2 + \
-                                              self.setting['BallSize']
+                    self.setting['BallSize']
                 self.data['ball']['speed'][0] = - self.data['ball']['speed'][0]
             elif self.data['ball']['speed'][0] == 0:
                 self.data['ball']['pos'][1] = self.setting['ScreenSize'][1] - self.setting['TableSize'][1] - \
-                                              self.setting['NetSize'][1] - \
-                                              self.setting['BallSize']
+                    self.setting['NetSize'][1] - \
+                    self.setting['BallSize']
                 self.data['ball']['speed'][1] = - self.data['ball']['speed'][1]
             self.judge('hitNet')
         if isinstance(self.data['your_score'], int) and isinstance(self.data['your_score'], int) and (
-                        self.data['your_score'] >= self.setting['WinScore'] or self.data['my_score'] >= self.setting[
-                    'WinScore']):
+            self.data['your_score'] >= self.setting['WinScore'] or self.data['my_score'] >= self.setting[
+                'WinScore']):
             if self.data['my_score'] >= self.setting['WinScore']:
                 self.data['your_score'], self.data['my_score'] = 'Lose', 'Win'
             else:
@@ -466,7 +484,8 @@ class Game:
         self.screen.blit(self.net, (self.setting['ScreenSize'][0] / 2 - self.setting['NetSize'][0] / 2,
                                     self.setting['ScreenSize'][1] - self.setting['NetSize'][1] -
                                     self.setting['TableSize'][1]))
-        pos = (self.data['ball']['pos'] - np.array([self.setting['BallSize'], self.setting['BallSize']]))
+        pos = (self.data['ball'][
+               'pos'] - np.array([self.setting['BallSize'], self.setting['BallSize']]))
         self.screen.blit(self.ball, pos)
         pos = (
             self.data['my_bat']['pdc_pos'] - np.array([self.setting['BatSize'][0] / 2, self.setting['BatSize'][1] / 2]))
@@ -474,7 +493,8 @@ class Game:
         pos = (
             self.data['your_bat']['pos'] - np.array([self.setting['BatSize'][0] / 2, self.setting['BatSize'][1] / 2]))
         self.screen.blit(self.bat, pos)
-        self.screen.blit(score, (self.setting['ScreenSize'][0] / 2 - score.get_width() / 2, 0))
+        self.screen.blit(score, (self.setting['ScreenSize'][
+                         0] / 2 - score.get_width() / 2, 0))
         if self.setting['Debug']:
             fps = self.debug_font.render('fps: {} interval: {}'.format(self.data['fps'], self.data['interval']), True,
                                          self.BLACK, self.WHITE)
