@@ -1,3 +1,6 @@
 [submodule "DevEnvSys"]
 	path = DevEnvSys
 	url = https://github.com/miswanting/DevEnvSys.git
+[submodule "lib-ML"]
+	path = lib-ML
+	url = https://github.com/miswanting/lib-ML.git
